@@ -1,14 +1,9 @@
 package com.example.demofaf.processor;
 
-import com.example.demofaf.model.LogItem;
 import com.example.demofaf.model.Persona;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
-import org.springframework.batch.item.file.transform.FieldSet;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class PersonaItemProcessor implements ItemProcessor<Persona, Persona> {
 

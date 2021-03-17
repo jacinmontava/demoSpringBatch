@@ -2,7 +2,6 @@ package com.example.demofaf.listener;
 
 import com.example.demofaf.model.LogItem;
 import com.example.demofaf.model.Persona;
-import com.example.demofaf.processor.PersonaItemProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.BatchStatus;
@@ -30,29 +29,25 @@ public class JobListener extends JobExecutionListenerSupport {
         super.afterJob(jobExecution);
         if (jobExecution.getStatus() == BatchStatus.COMPLETED) {
             LOG.info("Finalizó el job");
+
+            /*** PERSONA FLOW ***/
             jdbcTemplate
                     .query("SELECT nombre,apellido,telefono FROM persona",
                             (rs, row) -> new Persona(rs.getString(1), rs.getString(2), rs.getString(3)))
                     .forEach(persona -> LOG.info("Registro: " + persona));
-        }
-    }
 
-    /*@Override
-    public void afterJob(JobExecution jobExecution) {
-        super.afterJob(jobExecution);
-        if (jobExecution.getStatus() == BatchStatus.COMPLETED) {
-            LOG.info("Finalizó el job");
+            /*** LOG-ITEM FLOW ***
             jdbcTemplate
                     .query("SELECT JO002SERVIDOR, JO002OPERACION, JO002FECHA, JO002HORA, " +
                                     "JO002TIPO, JO002TIEMPOMEDIO, JO002PETICIONES FROM JO002CPUDIARIO",
                             (rs, row) -> new LogItem(rs.getString(1),
                                     rs.getString(2),
                                     rs.getDate(3),
-                                    rs.getTime(4),
+                                    rs.getString(4),
                                     rs.getString(5),
                                     rs.getDouble(6),
                                     rs.getInt(7)))
-                    .forEach(logItem -> LOG.info("Registro: " + logItem));
+                    .forEach(logItem -> LOG.info("Registro: " + logItem));*/
         }
-    }*/
+    }
 }
