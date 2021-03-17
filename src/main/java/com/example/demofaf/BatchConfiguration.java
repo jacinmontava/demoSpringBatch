@@ -9,12 +9,17 @@ import org.springframework.batch.core.configuration.annotation.EnableBatchProces
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
+import org.springframework.batch.item.file.mapping.DefaultLineMapper;
+import org.springframework.batch.item.file.mapping.PassThroughFieldSetMapper;
+import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
+import org.springframework.batch.item.file.transform.FieldSet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,16 +38,15 @@ public class BatchConfiguration {
     public StepBuilderFactory stepBuilderFactory;
 
     @Bean
-    public FlatFileItemReader<Persona> reader() {
+    public FlatFileItemReader<FieldSet> reader() {
 
-        return new FlatFileItemReaderBuilder<Persona>().name("personaItemReader")
-                .resource(new ClassPathResource("data.csv")).delimited()
-                .names(new String[] { "nombre", "apellido", "telefono" })
-                .fieldSetMapper(new BeanWrapperFieldSetMapper<Persona>() {
-                    {
-                        setTargetType(Persona.class);
-                    }
-                }).build();
+        FlatFileItemReader<FieldSet> reader = new FlatFileItemReader<>();
+        reader.setResource(new ClassPathResource("data.csv"));
+        reader.setLineMapper(new DefaultLineMapper() {{
+                setLineTokenizer(new DelimitedLineTokenizer());
+                setFieldSetMapper(new PassThroughFieldSetMapper() {{}});
+        }});
+        return reader;
     }
 
     @Bean
@@ -67,7 +71,7 @@ public class BatchConfiguration {
     @Bean
     public Step step(JdbcBatchItemWriter<Persona> writer) {
         return stepBuilderFactory.get("step")
-        .<Persona, Persona> chunk(10)
+        .<FieldSet, Persona> chunk(10)
         .reader(reader())
         .processor(processor())
         .writer(writer)
