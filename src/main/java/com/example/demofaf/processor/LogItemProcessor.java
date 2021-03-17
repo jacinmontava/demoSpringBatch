@@ -6,15 +6,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.file.transform.FieldSet;
 
-import java.sql.*;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
-
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,7 +20,7 @@ public class LogItemProcessor implements ItemProcessor<FieldSet, LogItem> {
 
     @Override
     public LogItem process(FieldSet item) throws Exception {
-        System.out.println("ITEM : " + item);
+        LOG.info("ITEM : " + item);
         final String regex = ".+?(?=\\[)\\[(.+?(?=\\:))\\:(.+?(?=\\s?\\+)).+?(?=\\\")\\\"(.+?(?=\\s?\\/))\\s?(.+?(?=\\\")).+?(?=\\:)\\:\\s?(.+?(?=\\]))";
 
         final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
@@ -33,30 +28,34 @@ public class LogItemProcessor implements ItemProcessor<FieldSet, LogItem> {
         LogItem logItemNow = new LogItem();
         while (matcher.find()) {
             for (int i = 1; i <= matcher.groupCount(); i++) {
-                System.out.println("Group " + i + ": " + matcher.group(i));
+                LOG.info("Group " + i + ": " + matcher.group(i));
                 logItemNow.setJO002SERVIDOR("server_nosequees");
                 String result = matcher.group(i);
-                switch (i){
-                    case 1: //DateFormat formatterD = new SimpleDateFormat("dd/MMM/yyyy");
+                switch (i) {
+                    case 1:
                         DateTimeFormatter formatterD = DateTimeFormatter.ofPattern("dd/MMM/yyyy", Locale.ENGLISH);
                         LocalDate date = LocalDate.parse(result, formatterD);
                         ZoneId defaultZoneId = ZoneId.systemDefault();
                         Date dateConvert = Date.from(date.atStartOfDay(defaultZoneId).toInstant());
                         logItemNow.setJO002FECHA(dateConvert);
                         break;
-                    case 2: logItemNow.setJO002HORA(result);
+                    case 2:
+                        logItemNow.setJO002HORA(result);
                         break;
-                    case 3: logItemNow.setJO002TIPO(result);
+                    case 3:
+                        logItemNow.setJO002TIPO(result);
                         break;
-                    case 4: logItemNow.setJO002OPERACION(result);
+                    case 4:
+                        logItemNow.setJO002OPERACION(result);
                         break;
-                    case 5: double valueNumber = Double.parseDouble(result);
+                    case 5:
+                        double valueNumber = Double.parseDouble(result);
                         logItemNow.setJO002TIEMPOMEDIO(valueNumber);
                         break;
                 }
             }
-            System.out.println("Object created: "+logItemNow.toString());
+            LOG.info("Object created: " + logItemNow.toString());
         }
-        return logItemNow;//null; //
+        return logItemNow;
     }
 }

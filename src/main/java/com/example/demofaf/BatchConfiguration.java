@@ -2,9 +2,7 @@ package com.example.demofaf;
 
 import com.example.demofaf.listener.JobListener;
 import com.example.demofaf.model.LogItem;
-import com.example.demofaf.model.Persona;
 import com.example.demofaf.processor.LogItemProcessor;
-import com.example.demofaf.processor.PersonaItemProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
@@ -17,8 +15,6 @@ import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourc
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
 import org.springframework.batch.item.file.FlatFileItemReader;
-import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
-import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.mapping.PassThroughFieldSetMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
@@ -34,62 +30,15 @@ import javax.sql.DataSource;
 @EnableBatchProcessing
 public class BatchConfiguration {
 
-    private static final Logger LOG = LoggerFactory.getLogger(BatchConfiguration.class);
-
     @Autowired
     public JobBuilderFactory jobBuilderFactory;
 
     @Autowired
     public StepBuilderFactory stepBuilderFactory;
 
-    /*** PERSONA FLOW ***
+    /*** PERSONA FLOW ***/
     @Bean
-    public FlatFileItemReader<Persona> readerPerson() {
-        return new FlatFileItemReaderBuilder<Persona>().name("personaItemReader")
-                .resource(new ClassPathResource("data.csv")).delimited()
-                .names(new String[] { "nombre", "apellido", "telefono" })
-                .fieldSetMapper(new BeanWrapperFieldSetMapper<Persona>() {
-                    {
-                        setTargetType(Persona.class);
-                    }
-                }).build();
-    }
-
-    @Bean
-    public PersonaItemProcessor processorPerson() {
-        return new PersonaItemProcessor();
-    }
-
-    @Bean
-    public JdbcBatchItemWriter<Persona> writerPerson(DataSource dataSource) {
-        return new JdbcBatchItemWriterBuilder<Persona>()
-                .itemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>())
-                .sql("INSERT INTO persona (nombre, apellido, telefono) VALUES (:nombre, :apellido, :telefono)")
-                .dataSource(dataSource).build();
-    }
-
-    @Bean
-    public Job importPersonaJob(JobListener listener, Step step) {
-        return jobBuilderFactory.get("importPersonaJob")
-                .incrementer(new RunIdIncrementer())
-                .listener(listener)
-                .flow(step).end().build();
-    }
-
-    @Bean
-    public Step step(JdbcBatchItemWriter<Persona> writerPerson) {
-        return stepBuilderFactory.get("step")
-                .<Persona, Persona> chunk(10)
-                .reader(readerPerson())
-                .processor(processorPerson())
-                .writer(writerPerson)
-                .build();
-    }
-
-    *** LOG-ITEM FLOW ***/
-
-    @Bean
-    public FlatFileItemReader<FieldSet> readerLog() {
+    public FlatFileItemReader<FieldSet> reader() {
         FlatFileItemReader<FieldSet> reader = new FlatFileItemReader<>();
         reader.setResource(new ClassPathResource("data_log.csv"));
         reader.setLineMapper(new DefaultLineMapper() {{
@@ -100,12 +49,12 @@ public class BatchConfiguration {
     }
 
     @Bean
-    public LogItemProcessor processorLog() {
+    public LogItemProcessor processor() {
         return new LogItemProcessor();
     }
 
     @Bean
-    public JdbcBatchItemWriter<LogItem> writerLog(DataSource dataSource) {
+    public JdbcBatchItemWriter<LogItem> writer(DataSource dataSource) {
         return new JdbcBatchItemWriterBuilder<LogItem>()
                 .itemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>())
                 .sql("INSERT INTO JO002CPUDIARIO (JO002SERVIDOR, JO002OPERACION, JO002FECHA, " +
@@ -115,20 +64,21 @@ public class BatchConfiguration {
                 .dataSource(dataSource).build();
     }
 
-    public Job importLogJob(JobListener listener, Step step) {
-        return jobBuilderFactory.get("importLogJob")
+    @Bean
+    public Job importJob(JobListener listener, Step step) {
+        return jobBuilderFactory.get("importJob")
                 .incrementer(new RunIdIncrementer())
                 .listener(listener)
                 .flow(step).end().build();
     }
 
     @Bean
-    public Step stepLog(JdbcBatchItemWriter<LogItem> writerLog) {
-        return stepBuilderFactory.get("stepLog")
+    public Step step(JdbcBatchItemWriter<LogItem> writerPerson) {
+        return stepBuilderFactory.get("step")
                 .<FieldSet, LogItem> chunk(10)
-                .reader(readerLog())
-                .processor(processorLog())
-                .writer(writerLog)
+                .reader(reader())
+                .processor(processor())
+                .writer(writerPerson)
                 .build();
     }
 }
