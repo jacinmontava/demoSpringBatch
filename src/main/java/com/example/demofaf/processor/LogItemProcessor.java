@@ -4,28 +4,17 @@ import com.example.demofaf.model.LogItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
+import org.springframework.batch.item.file.transform.FieldSet;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class LogItemProcessor implements ItemProcessor<LogItem, LogItem> {
+public class LogItemProcessor implements ItemProcessor<FieldSet, LogItem> {
 
     private static final Logger LOG = LoggerFactory.getLogger(LogItemProcessor.class);
 
-    /*Override
-    public Persona process(Persona persona) throws Exception {
-        String nombre = persona.getNombre().toUpperCase();
-        String apellido = persona.getApellido().toUpperCase();
-
-        Persona personaNew = new Persona(nombre, apellido, persona.getTelefono());
-
-        LOG.info("Persona: " + persona);
-        LOG.info("Persona New: " + personaNew);
-
-        return personaNew;
-    }*/
-
     @Override
-    public LogItem process(LogItem item) throws Exception {
+    public LogItem process(FieldSet item) throws Exception {
         final String regex = ".+?(?=\\[)\\[(.+?(?=\\:))\\:(.+?(?=\\s?\\+)).+?(?=\\\")\\\"(.+?(?=\\s?\\/))\\s?(.+?(?=\\\")).+?(?=\\:)\\:\\s?(.*$)";
 
         final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
@@ -35,7 +24,6 @@ public class LogItemProcessor implements ItemProcessor<LogItem, LogItem> {
             //System.out.println("Full match: " + matcher.group(0));
             for (int i = 1; i <= matcher.groupCount(); i++) {
                 System.out.println("Group " + i + ": " + matcher.group(i));
-
             }
         }
         return null;
