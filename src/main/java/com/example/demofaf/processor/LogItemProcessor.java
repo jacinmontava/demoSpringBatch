@@ -7,10 +7,14 @@ import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.file.transform.FieldSet;
 
 import java.sql.Time;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,10 +36,13 @@ public class LogItemProcessor implements ItemProcessor<FieldSet, LogItem> {
                 logItemNow.setJO002SERVIDOR("server_nose");
                 String result = matcher.group(i);
                 switch (i){
-                    /*case 1: DateFormat formatterD = new SimpleDateFormat("dd/MM/yyyy");
-                        Date date = (Date) formatterD.parse(result);
-                        logItemNow.setJO002FECHA(date);
-                        break;*/
+                    case 1: //DateFormat formatterD = new SimpleDateFormat("dd/MMM/yyyy");
+                        DateTimeFormatter formatterD = DateTimeFormatter.ofPattern("dd/MMM/yyyy", Locale.ENGLISH);
+                        LocalDate date = LocalDate.parse(result, formatterD);
+                        ZoneId defaultZoneId = ZoneId.systemDefault();
+                        Date dateConvert = Date.from(date.atStartOfDay(defaultZoneId).toInstant());
+                        logItemNow.setJO002FECHA(dateConvert);
+                        break;
                     /*case 2: DateFormat formatter = new SimpleDateFormat("HH:mm");
                         Time t = (Time) formatter.parse(result);
                         logItemNow.setJO002HORA(t);
