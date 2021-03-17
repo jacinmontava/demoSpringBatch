@@ -6,11 +6,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.file.transform.FieldSet;
 
-import java.sql.Time;
+import java.sql.*;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -29,11 +30,11 @@ public class LogItemProcessor implements ItemProcessor<FieldSet, LogItem> {
 
         final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
         final Matcher matcher = pattern.matcher(item.toString());
+        LogItem logItemNow = new LogItem();
         while (matcher.find()) {
             for (int i = 1; i <= matcher.groupCount(); i++) {
                 System.out.println("Group " + i + ": " + matcher.group(i));
-                LogItem logItemNow = new LogItem();
-                logItemNow.setJO002SERVIDOR("server_nose");
+                logItemNow.setJO002SERVIDOR("server_nosequees");
                 String result = matcher.group(i);
                 switch (i){
                     case 1: //DateFormat formatterD = new SimpleDateFormat("dd/MMM/yyyy");
@@ -43,10 +44,8 @@ public class LogItemProcessor implements ItemProcessor<FieldSet, LogItem> {
                         Date dateConvert = Date.from(date.atStartOfDay(defaultZoneId).toInstant());
                         logItemNow.setJO002FECHA(dateConvert);
                         break;
-                    /*case 2: DateFormat formatter = new SimpleDateFormat("HH:mm");
-                        Time t = (Time) formatter.parse(result);
-                        logItemNow.setJO002HORA(t);
-                        break;*/
+                    case 2: logItemNow.setJO002HORA(result);
+                        break;
                     case 3: logItemNow.setJO002TIPO(result);
                         break;
                     case 4: logItemNow.setJO002OPERACION(result);
@@ -56,7 +55,8 @@ public class LogItemProcessor implements ItemProcessor<FieldSet, LogItem> {
                         break;
                 }
             }
+            System.out.println("Object created: "+logItemNow.toString());
         }
-        return null;
+        return logItemNow;//null; //
     }
 }

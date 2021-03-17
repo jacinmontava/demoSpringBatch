@@ -23,7 +23,7 @@ public class LogItem {
     private String JO002SERVIDOR;
     private String JO002OPERACION;
     private Date JO002FECHA;
-    private Time JO002HORA;
+    private String JO002HORA;
     private String JO002TIPO;
     private Double JO002TIEMPOMEDIO;
     private int JO002PETICIONES;
@@ -32,7 +32,7 @@ public class LogItem {
         super();
     }
 
-    public LogItem(String JO002SERVIDOR, String JO002OPERACION, Date JO002FECHA, Time JO002HORA, String JO002TIPO, Double JO002TIEMPOMEDIO, int JO002PETICIONES) {
+    public LogItem(String JO002SERVIDOR, String JO002OPERACION, Date JO002FECHA, String JO002HORA, String JO002TIPO, Double JO002TIEMPOMEDIO, int JO002PETICIONES) {
         super();
         this.JO002SERVIDOR = JO002SERVIDOR;
         this.JO002OPERACION = JO002OPERACION;
@@ -67,11 +67,11 @@ public class LogItem {
         this.JO002FECHA = JO002FECHA;
     }
 
-    public Time getJO002HORA() {
+    public String getJO002HORA() {
         return JO002HORA;
     }
 
-    public void setJO002HORA(Time JO002HORA) {
+    public void setJO002HORA(String JO002HORA) {
         this.JO002HORA = JO002HORA;
     }
 
