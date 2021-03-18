@@ -8,11 +8,11 @@
 		<version>2.4.3</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.example</groupId>
-	<artifactId>demofaf</artifactId>
+	<groupId>es.orizon.load.logs</groupId>
+	<artifactId>CargaLogsOps</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>demofaf</name>
-	<description>Demo project for Spring Boot</description>
+	<name>CargaLogsOps</name>
+	<description>Carga de logs de operaciones de Sabadell</description>
 	<properties>
 		<java.version>15</java.version>
 	</properties>
