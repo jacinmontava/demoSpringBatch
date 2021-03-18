@@ -1,6 +1,6 @@
-package com.example.demofaf.listener;
+package es.orizon.load.logs.listener;
 
-import com.example.demofaf.model.LogItem;
+import es.orizon.load.logs.model.LogItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.BatchStatus;

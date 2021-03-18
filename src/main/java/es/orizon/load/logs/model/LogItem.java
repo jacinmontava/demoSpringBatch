@@ -1,4 +1,4 @@
-package com.example.demofaf.model;
+package es.orizon.load.logs.model;
 
 import java.sql.Time;
 import java.util.Date;

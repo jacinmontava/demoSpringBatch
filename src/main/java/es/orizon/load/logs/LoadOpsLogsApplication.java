@@ -1,13 +1,13 @@
-package com.example.demofaf;
+package es.orizon.load.logs;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class DemofafApplication {
+public class LoadOpsLogsApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(DemofafApplication.class, args);
+		SpringApplication.run(LoadOpsLogsApplication.class, args);
 	}
 
 }

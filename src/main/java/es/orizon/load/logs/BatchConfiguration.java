@@ -1,10 +1,8 @@
-package com.example.demofaf;
+package es.orizon.load.logs;
 
-import com.example.demofaf.listener.JobListener;
-import com.example.demofaf.model.LogItem;
-import com.example.demofaf.processor.LogItemProcessor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import es.orizon.load.logs.listener.JobListener;
+import es.orizon.load.logs.model.LogItem;
+import es.orizon.load.logs.processor.LogItemProcessor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;

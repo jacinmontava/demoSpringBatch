@@ -1,6 +1,6 @@
-package com.example.demofaf.processor;
+package es.orizon.load.logs.processor;
 
-import com.example.demofaf.model.LogItem;
+import es.orizon.load.logs.model.LogItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
